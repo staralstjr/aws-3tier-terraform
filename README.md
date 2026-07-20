@@ -58,10 +58,30 @@ terraform destroy   # 전체 정리
 ## ✅ 진행 상황
 
 - [x] VPC + 다중 AZ 서브넷 (network foundation)
-- [ ] Internet Gateway + 라우팅
-- [ ] NAT Gateway (private 서브넷 인터넷 출구)
-- [ ] EC2 + Auto Scaling Group (App tier)
-- [ ] Application Load Balancer
-- [ ] RDS + Security Group (DB tier)
+- [x] Internet Gateway + 라우팅
+- [x] NAT Gateway (private 서브넷 인터넷 출구)
+- [x] EC2 + Auto Scaling Group (App tier)
+- [x] Application Load Balancer
+- [x] RDS + Security Group (DB tier)
 
-자세한 진행 기록은 [`docs/`](docs/) 참고.
+**3-tier 아키텍처 구축 완료.** 실제 배포 후 아래를 검증했다.
+
+- **로드밸런싱 · 멀티 AZ** — ALB 접속 시 2a/2c 서버가 교대로 응답
+- **자가 치유** — App 서버 강제 종료 → 무중단 유지 → ASG가 동일 AZ에 자동 재생성
+- **DB 격리** — 외부에서 RDS 접속 시도 시 타임아웃(사설 IP, App tier만 접근 가능)
+
+### 다음 계획
+
+- [ ] Auto Scaling 정책 (CPU 기반 스케일 인/아웃)
+- [ ] CI/CD — GitHub Actions로 `terraform plan` 자동화
+- [ ] 애플리케이션 컨테이너화 (Docker)
+
+## 📚 문서
+
+| 문서 | 내용 |
+|------|------|
+| [progress-01-network-foundation.md](docs/progress-01-network-foundation.md) | 네트워크 기반 구축 기록 + 필요 선행지식 분석 |
+| [concept-routing-igw.md](docs/concept-routing-igw.md) | 라우팅 테이블 · Internet Gateway · 서브넷 연결 |
+| [concept-nat-gateway.md](docs/concept-nat-gateway.md) | NAT Gateway · private 서브넷 아웃바운드 |
+| [concept-app-tier-alb.md](docs/concept-app-tier-alb.md) | Launch Template · ASG · ALB · 자가 치유 실증 |
+| [concept-db-tier-rds.md](docs/concept-db-tier-rds.md) | RDS · 보안 사슬 · 격리 검증 |
